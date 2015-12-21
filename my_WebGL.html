@@ -66,10 +66,11 @@
 
       function getInfo(data_name)
       {
-        var p = '<iframe width="420" scrolling="no" height="60" frameborder="0" allowtransparency="true" src="http://i.tianqi.com/index.php?c=code&id=12&color=%23FFFFFF&bdc=%23&icon=2&py='+getPinyin(data_name)+'&num=3"></iframe>';
+        var name = getName(data_name);
+        var p = '<iframe width="420" scrolling="no" height="60" frameborder="0" allowtransparency="true" src="http://i.tianqi.com/index.php?c=code&id=12&color=%23FFFFFF&bdc=%23&icon=2&py='+name[1]+'&num=3"></iframe>';
         document.getElementById("frame").innerHTML=p;
         
-        new Mycharts.LineChart("main2",data_name);
+        new Mycharts.LineChart("main2",name[0]);
         new Mycharts.BarChart("main");
         new Mycharts.ScatterChart("main3");
       }

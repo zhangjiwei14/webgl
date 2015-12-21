@@ -23,12 +23,13 @@ var coord = new Array();
     return coord;
 }
 
-function getPinyin(data_name){ 
-var pinyin;
+function getName(data_name){ 
+var name_en;
+var name_cn;
     $.ajax({
         async : false,
         type: 'GET',
-        url: 'http://apis.baidu.com/xiaogg/changetopinyin/topinyin?type=json&traditional=0&accent=0&letter=0&only_chinese=0&str='+data_name,
+        url: 'http://apis.baidu.com/apistore/weatherservice/citylist?cityname='+data_name,
         dataType:'json',
         headers:{
           "apikey":"a14a43d64bfc59f4b6bd191d21e6d159"
@@ -38,13 +39,16 @@ var pinyin;
         },
         success:function(json){
           data = eval(json);
-          pinyin = data.pinyin.replace(/\s/g,"");
+          name_en = data.retData[0].name_en;
+          if(name_en == 'taibeixian')
+            name_en = 'taibei';
+          name_cn = data.retData[0].name_cn;
         },
         error:function(e){
             alert(" ˝æ›º”‘ÿ ß∞‹");
         }
     });
-    return pinyin;
+    return [name_cn,name_en];
 }
 
 function getData(data_name){ 
