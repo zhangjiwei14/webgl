@@ -1,0 +1,157 @@
+<!DOCTYPE HTML>
+<html>
+  <meta charset="utf-8">
+  <head>
+    <script src = "js\jquery-2.1.4.js"></script>
+    <script src="api.js"></script>
+    <script src = "js\mycharts.js"></script>
+    <script src = "js\getdata.js"></script>
+    <script src="js\esl.js"></script>
+    <script src="js\echarts.js"></script>
+    <script src="js\map.js"></script>
+    <script>
+
+    var earth;
+    var rollspeeds =0.0;
+    var animate_id = 0;
+    var con = null;
+    var pointM = null;
+      function initialize() {
+
+      earth = new WebGLEarth('earth_div');
+      
+       var bingKey = '5rwK1k1bY9njQVBio2sm~3JlCMrE8y_eJj6p89F_scQ~AjtRw9vsfm2dj88n-7PShgJJmZ_kbboZgm2S2BOlZn9SSp0aGxD-078L8vM1cTbz'; 
+  
+       map1 = earth.initMap(WebGLEarth.Maps.BING, ['AerialWithLabels', bingKey]); 
+       map2 = earth.initMap(WebGLEarth.Maps.MAPQUEST); 
+
+       mapBo = earth.initMap(WebGLEarth.Maps.BING, ['AerialWithLabels', bingKey]); 
+       mapMo = earth.initMap(WebGLEarth.Maps.MAPQUEST); 
+
+       earth.setBaseMap(map1); 
+       mapBo.setOpacity(0.5);
+       mapMo.setOpacity(0.5);
+
+
+       //get roll speed
+       document.getElementById('rollspeed').addEventListener('change', function(e) {
+          rollspeeds = e.target.value;
+          cancelAnimationFrame(animate_id);
+          animotion();
+        });
+
+      }
+     
+           
+      
+       function animotion()
+      { 
+        var before = null;
+        var animate_id = null;
+
+        requestAnimationFrame(function animate(now) {
+            if (rollspeeds!=0) {
+                var c = earth.getPosition();
+                var elapsed = before? now - before: 0;
+                before = now;
+                earth.setView([c[0], c[1] + rollspeeds*(elapsed/30)]);
+                animate_id = requestAnimationFrame(animate);
+            }
+            else
+                cancelAnimationFrame(animate_id);
+        });
+
+      }
+      
+
+      function getInfo(data_name)
+      {
+        var p = '<iframe width="420" scrolling="no" height="60" frameborder="0" allowtransparency="true" src="http://i.tianqi.com/index.php?c=code&id=12&color=%23FFFFFF&bdc=%23&icon=2&py='+getPinyin(data_name)+'&num=3"></iframe>';
+        document.getElementById("frame").innerHTML=p;
+        
+        new Mycharts.LineChart("main2",data_name);
+        new Mycharts.BarChart("main");
+        new Mycharts.ScatterChart("main3");
+      }
+
+      function getCurrentCenter() {
+       alert(earth.getCenter());
+       // alert("hahaha");
+      }
+
+       function panTo(data_name) {
+
+        var coord = getCoord(data_name);
+        if(isNaN(coord[0])|| isNaN(coord[1]))
+           return ;
+        new Mycharts.MapChart("main4",data_name,coord);
+        earth.panTo(coord);
+        if(pointM != null)
+        {
+          pointM.closePopup();
+        }
+        pointM = earth.initMarker(coord[0],coord[1]);
+        var context = '<h2>'+data_name+'</h2>坐标位置：北纬'+coord[0]+'° 东经'+coord[1]+'°';
+        pointM.bindPopup(context, 250).openPopup();
+       // alert("hahaha");
+      }
+
+      function charge(value,content){
+       // alert("the choosed option value"+value+"the content"+content);
+        if(value == 1)
+          earth.setBaseMap(map1); 
+        else if(value == 2)
+          earth.setBaseMap(map2);
+      }
+
+    </script>
+
+    <style>
+      html, body{padding: 0; margin: 0;}
+      #earth_div{top: 0; right: 0; bottom: 0; left: 0; background-image:url('stars.jpg'); background-size:100% 100%; position: absolute !important;}
+      #coords_div{position: absolute; bottom: 100px; right: 10px; z-index: 100000;}
+      #form_div{position: absolute ;top: 10px; left: 0px; }
+      #rollcontrol{position: absolute; top:10px; right: 10px; color:white;}
+      #frame {position: absolute; bottom:10px; right: 10px;z-index:10;}
+      #main {position: absolute; bottom: 0px; left: 0px; width: 40%; height: 40%;}
+      #main2 {position: absolute; bottom: 50px; right: 0px; width: 30%; height: 40%;}
+      #main3 {position: absolute; top:100px; right: 10px; width: 30%; height: 40%;}
+      #main4 {position: absolute; top:100px; left: 0px; width: 30%; height: 40%;}
+    </style>
+
+      <title>MY WEBGL GLOBAL</title>
+    </head>
+    <body onload="initialize()">
+      <div id = "frame">
+      </div>
+      <div id="earth_div"></div>
+      <div id = "coords_div"></div>
+      <div id="form_div">  
+        <input id = "text1" name = "search text" type = "text" value="">
+        <input name = "serch button" type="button" value="搜索" onclick = "panTo(document.getElementById('text1').value)">
+        <input name = "show information" type="button" value="详细信息" onclick="getInfo(document.getElementById('text1').value)"> <br>
+        <select name="map ifor" onchange="charge(this.value,this.options[this.selectedIndex].text)">
+        <option value="1">Bing街景地图</option>
+        <option value="2">城市道路图</option>
+  
+        </select>
+        
+        <input name = "show button" type="button" value="当前坐标" onclick="getCurrentCenter()"> 
+        </div>
+
+        <div id="rollcontrol">
+        
+      roll speed:<br>
+      0<input type="range" id="rollspeed" min="0" max="0.4" step="0.1" value="0">4<br>
+     
+    </div>
+    <div id = 'main'>     
+    </div>
+    <div id = "main2">
+    </div>
+    <div id = "main3">
+    </div>
+    <div id = "main4">
+    </div>    
+  </body>
+</html>
