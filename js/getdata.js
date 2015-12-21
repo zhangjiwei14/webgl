@@ -17,7 +17,7 @@ var coord = new Array();
           coord[1] = Number(data.x);
         },
         error:function(e){
-            alert("Êı¾İ¼ÓÔØÊ§°Ü");
+            alert("æ•°æ®åŠ è½½å¤±è´¥");
         }
     });
     return coord;
@@ -28,7 +28,7 @@ var pinyin;
     $.ajax({
         async : false,
         type: 'GET',
-        url: 'http://apis.baidu.com/xiaogg/changetopinyin/topinyin?type=json&traditional=0&accent=0&letter=0&only_chinese=0&str='+data_name,
+        url: 'http://apis.baidu.com/apistore/weatherservice/citylist?cityname='+data_name,
         dataType:'json',
         headers:{
           "apikey":"a14a43d64bfc59f4b6bd191d21e6d159"
@@ -38,10 +38,10 @@ var pinyin;
         },
         success:function(json){
           data = eval(json);
-          pinyin = data.pinyin.replace(/\s/g,"");
+          pinyin = data.retData[0].name_en;
         },
         error:function(e){
-            alert("Êı¾İ¼ÓÔØÊ§°Ü");
+            alert("æ•°æ®åŠ è½½å¤±è´¥");
         }
     });
     return pinyin;
@@ -83,7 +83,7 @@ function getData(data_name){
 
         },
         error:function(){
-            alert("Êı¾İ¼ÓÔØÊ§°Ü");
+            alert("æ•°æ®åŠ è½½å¤±è´¥");
         }
     });
     return data; 
