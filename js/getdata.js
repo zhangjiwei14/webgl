@@ -17,14 +17,15 @@ var coord = new Array();
           coord[1] = Number(data.x);
         },
         error:function(e){
-            alert("æ•°æ®åŠ è½½å¤±è´¥");
+            alert("Êı¾İ¼ÓÔØÊ§°Ü");
         }
     });
     return coord;
 }
 
-function getPinyin(data_name){ 
-var pinyin;
+function getName(data_name){ 
+var name_en;
+var name_cn;
     $.ajax({
         async : false,
         type: 'GET',
@@ -38,13 +39,16 @@ var pinyin;
         },
         success:function(json){
           data = eval(json);
-          pinyin = data.retData[0].name_en;
+          name_en = data.retData[0].name_en;
+          if(name_en == 'taibeixian')
+            name_en = 'taibei';
+          name_cn = data.retData[0].name_cn;
         },
         error:function(e){
-            alert("æ•°æ®åŠ è½½å¤±è´¥");
+            alert("Êı¾İ¼ÓÔØÊ§°Ü");
         }
     });
-    return pinyin;
+    return [name_cn,name_en];
 }
 
 function getData(data_name){ 
@@ -83,7 +87,7 @@ function getData(data_name){
 
         },
         error:function(){
-            alert("æ•°æ®åŠ è½½å¤±è´¥");
+            alert("Êı¾İ¼ÓÔØÊ§°Ü");
         }
     });
     return data; 
